@@ -11,7 +11,7 @@ gulp.task('help', plugin.taskListing);
 gulp.task('default', ['help']);
 
 gulp.task('lint-js', function() {
-    log('Analyzing source with JSHint and JSCS');
+    log('Analyzing source with JSHint');
     return gulp
         .src(config.alljs)
         .pipe(plugin.if(args.verbose, plugin.print()))
@@ -20,7 +20,13 @@ gulp.task('lint-js', function() {
         .pipe(plugin.jshint.reporter('fail'));
 });
 
+gulp.task('watch-js', function(){
+    log('Watching Javascript files');
+    gulp.watch(config.alljs, ['lint-js']);
+});
+
 gulp.task('lint-scss', function() {
+    log('Linting Scss files');
     gulp.src(config.scss)
         .pipe(plugin.scssLint({ customReport: plugin.scssLintStylish }));
 });
@@ -33,24 +39,32 @@ gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
         .pipe(plugin.plumber())
         .pipe(plugin.sass())
         .pipe(plugin.autoprefixer({browsers: ['last 2 version', '> 5%']}))
-        .pipe(gulp.dest(config.build + 'css'));
+        .pipe(gulp.dest(config.temp));
 });
 
 gulp.task('clean-styles', function(){
+    log('Cleaning css files');
     clean(config.build + 'css/*.css');
 });
 
-gulp.task('scss-watcher', function(){
+gulp.task('watch-scss', function(){
+    log('Watching Scss files');
     gulp.watch(config.scss, ['lint-scss']);
 });
 
 gulp.task('lint-html', function() {
+    log('Linting Html files');
     return gulp.src(config.html)
         .pipe(plugin.htmllint());
 });
 
+gulp.task('watch-html', function(){
+    log('Watching Html files');
+    gulp.watch(config.html, ['lint-html']);
+});
+
 gulp.task('fonts', ['clean-fonts'], function(){
-    log('copying fonts');
+    log('Copying fonts');
     
     return gulp
         .src(config.fonts)
@@ -58,6 +72,7 @@ gulp.task('fonts', ['clean-fonts'], function(){
 });
 
 gulp.task('clean-fonts', function(){
+    log('Cleaning font files');
     clean(config.build + 'fonts/*.*');
 });
 
@@ -71,25 +86,34 @@ gulp.task('images', ['clean-images'], function(){
 });
 
 gulp.task('clean-images', function(){
+    log('Cleaning image files');
     clean(config.build + 'images/*.*');
 });
 
-gulp.task('clean-all', function(done){
-    var delconfig = [].concat(config.build, config.temp);
-    log('Cleaning: ' + plugin.util.colors.blue(delconfig));
-    del(delconfig, done);
+gulp.task('clean-js', function(){
+    var deljs = [].concat(config.build + 'js/*.js', config.temp + 'js/*.js');
+    log('Cleaning Javascript files');
+    clean(deljs);
+});
+
+gulp.task('clean-all', function(){
+    var delconfig = [].concat(config.build);
+    log('Cleaning all: ' + plugin.util.colors.blue(delconfig));
+    del(delconfig);
 });
 
 gulp.task('clean-code', function(){
     var files = [].concat(
-            config.temp + '**/*.js',
-            config.build + '**/*.html',
-            config.build + 'js/**/*.js'
+            config.build + 'css/*.css',
+            config.build + 'fonts/*.*',
+            config.build + 'images/*.*',
+            config.build + 'js/*.js'
     );
+    log('Cleaning prod files');
     clean(files);
 });
 
-gulp.task('templatecache', ['clean-code'], function(){
+gulp.task('templatecache', ['clean-js'], function(){
     log('Creating AngularJS $templateCache');
     
     return gulp
@@ -99,13 +123,13 @@ gulp.task('templatecache', ['clean-code'], function(){
             config.templateCache.file,
             config.templateCache.options
         ))
-        .pipe(gulp.dest(config.build + 'js'));
+        .pipe(gulp.dest(config.temp));
 });
 
 gulp.task('wiredep', function(){
-    log('Wire up the bower css js and our app js into the html');
     var options = config.getWiredepDefaultOptions();
     var wiredep = require('wiredep').stream;
+    log('Wire up the bower css js and our app js into the html');
 
     return gulp
         .src(config.index)
@@ -120,7 +144,7 @@ gulp.task('wiredep', function(){
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('inject', ['wiredep', 'styles'], function(){
+gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function(){
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
@@ -135,7 +159,26 @@ gulp.task('inject', ['wiredep', 'styles'], function(){
 });
 
 gulp.task('serve-dev', function() {
+    log('Starting browser-sync');
     startBrowserSync();
+});
+
+gulp.task('optimize', ['inject'], function(){
+    var assets = plugin.useref.assets({searchPath: './'});
+    var templateCache = config.temp + config.templateCache.file;
+    log('Optimizing the javascritp, css, html');
+    
+    return gulp
+        .src(config.index)
+        .pipe(plugin.plumber())
+        .pipe(plugin.inject(gulp.src(templateCache, { read: false }),
+            { starttag: '<!-- inject:templates:js -->' }
+        ))
+        .pipe(assets)
+        .pipe(assets.restore())
+        .pipe(plugin.useref())
+        .pipe(gulp.dest(config.build))
+    ;
 });
 
 ////////
@@ -150,7 +193,7 @@ function startBrowserSync(){
         return;
     }
     
-    log('Starting browser-sync');
+    log('browser-sync started');
     gulp.watch(config.scss, ['styles'])
         .on('change', function(event){ changeEvent(event); });
     
@@ -160,7 +203,7 @@ function startBrowserSync(){
         files: [
             './src/**/*.*',
             '!' + config.scss,
-            config.temp + '**/*.css'
+            config.build + 'css/*.css'
         ],
         ghostMode: {
             clicks: true,
