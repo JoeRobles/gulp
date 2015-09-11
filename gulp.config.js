@@ -1,9 +1,16 @@
 module.exports = function() {
     var config = {
-        temp: './.tmp/',
-        css: './.tmp/style.css',
-        html: './src/**/*.html',
         alljs: './src/**/*.js',
+        bower: {
+            json: require('./bower.json'),
+            directory: './vendor/',
+            ignorePath: '../..'
+        },
+        build: './dist/',
+        css: './.tmp/style.css',
+        fonts: './vendor/bootstrap/dist/fonts/*.*',
+        html: './src/**/*.html',
+        images: './src/images/**/*.*',
         index: 'index.html',
         js: [
             './src/**/*.module.js',
@@ -11,10 +18,14 @@ module.exports = function() {
             '!./src/**/*.specs.js'
         ],
         scss: './src/scss/*.scss',
-        bower: {
-            json: require('./bower.json'),
-            directory: './vendor/',
-            ignorePath: '../..'
+        temp: './.tmp/',
+        templateCache: {
+            file: 'templates.js',
+            options: {
+                module: 'app.core',
+                standAlone: false,
+                root: 'app/'
+            }
         }
     };
     

@@ -6,9 +6,9 @@ var del = require('del');
 
 var plugin = require('gulp-load-plugins')({lazy: true});
 
-gulp.task('hello-world', function(){
-    console.log('Or first hellow world gulp task!');
-});
+gulp.task('help', plugin.taskListing);
+
+gulp.task('default', ['help']);
 
 gulp.task('lint-js', function() {
     log('Analyzing source with JSHint and JSCS');
@@ -25,11 +25,6 @@ gulp.task('lint-scss', function() {
         .pipe(plugin.scssLint({ customReport: plugin.scssLintStylish }));
 });
 
-gulp.task('lint-html', function() {
-    return gulp.src(config.html)
-        .pipe(plugin.htmllint());
-});
-
 gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
     log('Compiling Scss --> CSS');
     
@@ -38,16 +33,73 @@ gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
         .pipe(plugin.plumber())
         .pipe(plugin.sass())
         .pipe(plugin.autoprefixer({browsers: ['last 2 version', '> 5%']}))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.build + 'css'));
 });
 
 gulp.task('clean-styles', function(){
-    var files = config.temp + '**/*.css';
-    clean(files);
+    clean(config.build + 'css/*.css');
 });
 
 gulp.task('scss-watcher', function(){
     gulp.watch(config.scss, ['lint-scss']);
+});
+
+gulp.task('lint-html', function() {
+    return gulp.src(config.html)
+        .pipe(plugin.htmllint());
+});
+
+gulp.task('fonts', ['clean-fonts'], function(){
+    log('copying fonts');
+    
+    return gulp
+        .src(config.fonts)
+        .pipe(gulp.dest(config.build + 'fonts'));
+});
+
+gulp.task('clean-fonts', function(){
+    clean(config.build + 'fonts/*.*');
+});
+
+gulp.task('images', ['clean-images'], function(){
+    log('Copying and optimizing the images');
+    
+    return gulp
+        .src(config.images)
+        .pipe(plugin.imagemin({optimizationLevel:4}))
+        .pipe(gulp.dest(config.build + 'images'));
+});
+
+gulp.task('clean-images', function(){
+    clean(config.build + 'images/*.*');
+});
+
+gulp.task('clean-all', function(done){
+    var delconfig = [].concat(config.build, config.temp);
+    log('Cleaning: ' + plugin.util.colors.blue(delconfig));
+    del(delconfig, done);
+});
+
+gulp.task('clean-code', function(){
+    var files = [].concat(
+            config.temp + '**/*.js',
+            config.build + '**/*.html',
+            config.build + 'js/**/*.js'
+    );
+    clean(files);
+});
+
+gulp.task('templatecache', ['clean-code'], function(){
+    log('Creating AngularJS $templateCache');
+    
+    return gulp
+        .src(config.html)
+        .pipe(plugin.minifyHtml({empty: true}))
+        .pipe(plugin.angularTemplatecache(
+            config.templateCache.file,
+            config.templateCache.options
+        ))
+        .pipe(gulp.dest(config.build + 'js'));
 });
 
 gulp.task('wiredep', function(){
