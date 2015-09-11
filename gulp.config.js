@@ -2,7 +2,7 @@ module.exports = function() {
     var config = {
         temp: './.tmp/',
         css: './.tmp/style.css',
-        html: '../mbuildprj/ui/trunk/SelfServiceMBuildUI/**/*.html',
+        html: './src/**/*.html',
         alljs: './src/**/*.js',
         index: 'index.html',
         js: [

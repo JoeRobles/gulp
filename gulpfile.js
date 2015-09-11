@@ -50,14 +50,6 @@ gulp.task('scss-watcher', function(){
     gulp.watch(config.sass, ['lint-scss']);
 });
 
-gulp.task('js-watcher', function(){
-    gulp.watch(config.alljs, ['lint-js']);
-});
-
-gulp.task('html-watcher', function(){
-    gulp.watch(config.html, ['lint-html']);
-});
-
 gulp.task('wiredep', function(){
     log('Wire up the bower css js and our app js into the html');
     var options = config.getWiredepDefaultOptions();
@@ -104,8 +96,9 @@ function startBrowserSync(){
     log('Starting browser-sync');
     
     var options = {
-        proxy: 'local.gulp.com',
-        files: ['src/**/*.*'],
+        proxy: 'local.gulp.com:' + 80,
+        port: 3000,
+        files: ['./src/**/*.*'],
         ghostMode: {
             clicks: true,
             location: false,
@@ -120,7 +113,7 @@ function startBrowserSync(){
         reloadDelay: 1000
     };
     
-    return options;
+    browserSync(options);
 }
 
 function errorLogger(error) {
