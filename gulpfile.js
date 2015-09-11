@@ -21,7 +21,7 @@ gulp.task('lint-js', function() {
 });
 
 gulp.task('lint-scss', function() {
-    gulp.src(config.sass)
+    gulp.src(config.scss)
         .pipe(plugin.scssLint({ customReport: plugin.scssLintStylish }));
 });
 
@@ -31,10 +31,10 @@ gulp.task('lint-html', function() {
 });
 
 gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
-    log('Compiling Sass --> CSS');
+    log('Compiling Scss --> CSS');
     
     return gulp
-        .src(config.sass)
+        .src(config.scss)
         .pipe(plugin.plumber())
         .pipe(plugin.sass())
         .pipe(plugin.autoprefixer({browsers: ['last 2 version', '> 5%']}))
@@ -47,7 +47,7 @@ gulp.task('clean-styles', function(){
 });
 
 gulp.task('scss-watcher', function(){
-    gulp.watch(config.sass, ['lint-scss']);
+    gulp.watch(config.scss, ['lint-scss']);
 });
 
 gulp.task('wiredep', function(){
@@ -88,17 +88,28 @@ gulp.task('serve-dev', function() {
 
 ////////
 
+function changeEvent(event) {
+    var srcPattern = new RegExp('/.*(?=/' + config.source + ')/');
+    log('File ' + event.path.replace(srcPattern, '') + ' ' + event.type);
+}
+
 function startBrowserSync(){
     if (browserSync.active) {
         return;
     }
     
     log('Starting browser-sync');
+    gulp.watch(config.scss, ['styles'])
+        .on('change', function(event){ changeEvent(event); });
     
     var options = {
         proxy: 'local.gulp.com:' + 80,
         port: 3000,
-        files: ['./src/**/*.*'],
+        files: [
+            './src/**/*.*',
+            '!' + config.scss,
+            config.temp + '**/*.css'
+        ],
         ghostMode: {
             clicks: true,
             location: false,

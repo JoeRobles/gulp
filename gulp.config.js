@@ -10,7 +10,7 @@ module.exports = function() {
             './src/**/*.js',
             '!./src/**/*.specs.js'
         ],
-        sass: './src/sass/*.scss',
+        scss: './src/scss/*.scss',
         bower: {
             json: require('./bower.json'),
             directory: './vendor/',
