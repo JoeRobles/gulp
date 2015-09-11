@@ -5,6 +5,7 @@
         .module('blocks.logger')
         .factory('logger', logger);
 
+    logger.$inject = ['$log'];
     /* @ngInject */
     function logger($log) {
         var service = {
@@ -18,7 +19,9 @@
         };
 
         return service;
+        
         /////////////////////
+
         function error(message, data, title) {
             toastr.error(message, title);
             $log.error('Error: ' + message, data);

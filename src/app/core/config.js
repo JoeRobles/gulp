@@ -5,7 +5,6 @@
 
     core.config(toastrConfig);
 
-    /* @ngInject */
     function toastrConfig() {
         toastr.options.timeOut = 4000;
         toastr.options.positionClass = 'toast-bottom-right';
@@ -20,7 +19,7 @@
     core.value('config', config);
 
     core.config(configure);
-
+    configure.$inject = ['$logProvider', '$routeProvider', 'routehelperConfigProvider', 'exceptionHandlerProvider'];
     /* @ngInject */
     function configure ($logProvider, $routeProvider, routehelperConfigProvider, exceptionHandlerProvider) {
         // turn debugging off/on (no info or warn)
@@ -31,13 +30,10 @@
         // Configure the common route provider
         routehelperConfigProvider.config.$routeProvider = $routeProvider;
         routehelperConfigProvider.config.docTitle = 'NG-Modular: ';
-        var resolveAlways = { /* @ngInject */
-            ready: function(dataservice) {
+        var resolveAlways = {
+             ready: ['dataservice', function (dataservice) {
                 return dataservice.ready();
-            }
-            // ready: ['dataservice', function (dataservice) {
-            //    return dataservice.ready();
-            // }]
+             }]
         };
         routehelperConfigProvider.config.resolveAlways = resolveAlways;
 

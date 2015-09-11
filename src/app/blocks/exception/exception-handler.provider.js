@@ -26,7 +26,6 @@
             return {config: this.config};
         };
     }
-
     /**
      * Configure by setting an optional string value for appErrorPrefix.
      * Accessible via config.appErrorPrefix (via config value).
@@ -34,6 +33,7 @@
      * @return {[type]}
      * @ngInject
      */
+    config.$inject = ['$provide'];
     function config($provide) {
         $provide.decorator('$exceptionHandler', extendExceptionHandler);
     }
@@ -44,8 +44,9 @@
      * @param  {Object} exceptionHandler
      * @param  {Object} logger
      * @return {Function} the decorated $exceptionHandler service
+     * @ngInject
      */
-    /* @ngInject */
+    extendExceptionHandler.$inject = ['$delegate', 'exceptionHandler', 'logger'];
     function extendExceptionHandler($delegate, exceptionHandler, logger) {
         return function(exception, cause) {
             var appErrorPrefix = exceptionHandler.config.appErrorPrefix || '';

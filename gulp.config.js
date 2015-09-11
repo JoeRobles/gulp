@@ -2,7 +2,7 @@ module.exports = function() {
     var config = {
         temp: './.tmp/',
         alljs: './src/**/*.js',
-        index: './src/index.html',
+        index: 'index.html',
         js: [
             './src/**/*.module.js',
             './src/**/*.js',
@@ -20,7 +20,8 @@ module.exports = function() {
         var options = {
             bowerJson: config.bower.json,
             directory: config.bower.directory,
-            ignorePath: config.bower.ignorePath
+            ignorePath: config.bower.ignorePath,
+            cwd: config.bower.cwd
         };
         
         return options;

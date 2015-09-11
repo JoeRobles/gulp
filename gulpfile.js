@@ -47,8 +47,14 @@ gulp.task('wiredep', function(){
     return gulp
         .src(config.index)
         .pipe(wiredep(options))
-        .pipe(plugin.inject(gulp.src(config.js)))
-        .pipe(gulp.dest('./src/'))
+        .pipe(
+            plugin.inject(
+                gulp
+                    .src(config.js)
+                    .pipe(plugin.angularFilesort())
+            )
+        )
+        .pipe(gulp.dest('./'))
     ;
 });
 
@@ -66,7 +72,7 @@ function startBrowserSync(){
     log('Starting browser-sync');
     
     var options = {
-        proxy: 'local.mbuild.com',
+        proxy: 'local.gulp.com',
         files: ['src/**/*.*'],
         ghostMode: {
             clicks: true,
@@ -82,7 +88,7 @@ function startBrowserSync(){
         reloadDelay: 1000
     };
     
-    
+    return options;
 }
 
 function errorLogger(error) {
