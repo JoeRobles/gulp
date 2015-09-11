@@ -1,6 +1,8 @@
 module.exports = function() {
     var config = {
         temp: './.tmp/',
+        css: './.tmp/style.css',
+        html: '../mbuildprj/ui/trunk/SelfServiceMBuildUI/**/*.html',
         alljs: './src/**/*.js',
         index: 'index.html',
         js: [
@@ -20,8 +22,7 @@ module.exports = function() {
         var options = {
             bowerJson: config.bower.json,
             directory: config.bower.directory,
-            ignorePath: config.bower.ignorePath,
-            cwd: config.bower.cwd
+            ignorePath: config.bower.ignorePath
         };
         
         return options;

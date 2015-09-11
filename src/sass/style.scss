@@ -1,3 +1,5 @@
-a.non-underlined {
-  color: #00ff00;
+$font-color: #0f0;
+
+.non-underlined {
+  color: $font-color;
 }

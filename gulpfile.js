@@ -10,7 +10,7 @@ gulp.task('hello-world', function(){
     console.log('Or first hellow world gulp task!');
 });
 
-gulp.task('vet', function() {
+gulp.task('lint-js', function() {
     log('Analyzing source with JSHint and JSCS');
     return gulp
         .src(config.alljs)
@@ -20,7 +20,17 @@ gulp.task('vet', function() {
         .pipe(plugin.jshint.reporter('fail'));
 });
 
-gulp.task('styles', ['clean-styles'], function(){
+gulp.task('lint-scss', function() {
+    gulp.src(config.sass)
+        .pipe(plugin.scssLint({ customReport: plugin.scssLintStylish }));
+});
+
+gulp.task('lint-html', function() {
+    return gulp.src(config.html)
+        .pipe(plugin.htmllint());
+});
+
+gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
     log('Compiling Sass --> CSS');
     
     return gulp
@@ -36,11 +46,20 @@ gulp.task('clean-styles', function(){
     clean(files);
 });
 
-gulp.task('sass-watcher', function(){
-    gulp.watch(config.sass, ['styles']);
+gulp.task('scss-watcher', function(){
+    gulp.watch(config.sass, ['lint-scss']);
+});
+
+gulp.task('js-watcher', function(){
+    gulp.watch(config.alljs, ['lint-js']);
+});
+
+gulp.task('html-watcher', function(){
+    gulp.watch(config.html, ['lint-html']);
 });
 
 gulp.task('wiredep', function(){
+    log('Wire up the bower css js and our app js into the html');
     var options = config.getWiredepDefaultOptions();
     var wiredep = require('wiredep').stream;
 
@@ -54,8 +73,21 @@ gulp.task('wiredep', function(){
                     .pipe(plugin.angularFilesort())
             )
         )
-        .pipe(gulp.dest('./'))
-    ;
+        .pipe(gulp.dest('./'));
+});
+
+gulp.task('inject', ['wiredep', 'styles'], function(){
+    log('Wire up the app css into the html, and call wiredep');
+
+    return gulp
+        .src(config.index)
+        .pipe(
+            plugin.inject(
+                gulp
+                    .src(config.css)
+            )
+        )
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('serve-dev', function() {

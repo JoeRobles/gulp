@@ -6,6 +6,13 @@
   "authors": [
     "Joe Robles <joe.robles.pdj@gmail.com>"
   ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
     "angular": "~1.4.4",
     "angular-animate": "~1.4.5",
@@ -22,5 +29,11 @@
   },
   "resolutions": {
     "angular": "~1.4.4"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": "dist/css/bootstrap.css",
+      "dist": "dist/js/bootstrap.js"
+    }
   }
 }

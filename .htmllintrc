@@ -1,0 +1,12 @@
+{
+  "id-class-style": "dash",
+  "attr-quote-style": "double",
+  "id-no-dup": true,
+  "img-req-alt": true,
+  "img-req-src": true,
+  "indent-style": "spaces",
+  "indent-width": 4,
+  "label-req-for": true,
+  "line-end-style": "n",
+  "tag-name-lowercase": true  
+}
