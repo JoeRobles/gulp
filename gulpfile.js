@@ -43,8 +43,9 @@ gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
 });
 
 gulp.task('clean-styles', function(){
+    var delcss = [].concat(config.build + 'css/*.css', config.temp + '*.css');
     log('Cleaning css files');
-    clean(config.build + 'css/*.css');
+    clean(delcss);
 });
 
 gulp.task('watch-scss', function(){
@@ -91,7 +92,7 @@ gulp.task('clean-images', function(){
 });
 
 gulp.task('clean-js', function(){
-    var deljs = [].concat(config.build + 'js/*.js', config.temp + 'js/*.js');
+    var deljs = [].concat(config.build + 'js/*.js', config.temp + '*.js');
     log('Cleaning Javascript files');
     clean(deljs);
 });
@@ -113,7 +114,7 @@ gulp.task('clean-code', function(){
     clean(files);
 });
 
-gulp.task('templatecache', ['clean-js'], function(){
+gulp.task('templatecache', ['lint-js','clean-js'], function(){
     log('Creating AngularJS $templateCache');
     
     return gulp
@@ -144,15 +145,20 @@ gulp.task('wiredep', function(){
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function(){
+gulp.task('inject', ['styles', 'templatecache', 'wiredep'], function(){
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
         .src(config.index)
         .pipe(
             plugin.inject(
-                gulp
-                    .src(config.css)
+                gulp.src(config.css)
+            )
+        )
+        .pipe(
+            plugin.inject(
+                gulp.src(config.temp + config.templateCache.file),
+                { starttag: '<!-- inject:templates:js -->' }
             )
         )
         .pipe(gulp.dest('./'));
@@ -165,15 +171,11 @@ gulp.task('serve-dev', function() {
 
 gulp.task('optimize', ['inject'], function(){
     var assets = plugin.useref.assets({searchPath: './'});
-    var templateCache = config.temp + config.templateCache.file;
     log('Optimizing the javascritp, css, html');
-    
+
     return gulp
         .src(config.index)
         .pipe(plugin.plumber())
-        .pipe(plugin.inject(gulp.src(templateCache, { read: false }),
-            { starttag: '<!-- inject:templates:js -->' }
-        ))
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(plugin.useref())

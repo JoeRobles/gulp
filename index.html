@@ -6,50 +6,54 @@
         <meta name="viewport" content="width=device-width">
         <title data-ng-bind="title">Boiler Plate</title>
         <!-- build:css css/lib.css -->
-        <!-- bower:css -->
-        <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="vendor/toastr/toastr.css" />
-        <!--endbower -->
+            <!-- bower:css -->
+            <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.css" />
+            <link rel="stylesheet" href="vendor/toastr/toastr.css" />
+            <!--endbower -->
         <!-- endbuild -->
+        
         <!-- build:css css/app.css -->
-        <!-- inject:css -->
-        <link rel="stylesheet" href="/.tmp/style.css">
-        <!-- endinject -->
+            <!-- inject:css -->
+            <link rel="stylesheet" href="/.tmp/style.css">
+            <!-- endinject -->
         <!-- endbuild -->
     </head>
 
     <body>
         <div class="container" data-ng-view></div>
         <!-- build:js js/lib.js -->
-        <!-- bower:js -->
-        <script src="vendor/jquery/dist/jquery.js"></script>
-        <script src="vendor/angular/angular.js"></script>
-        <script src="vendor/angular-animate/angular-animate.js"></script>
-        <script src="vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-        <script src="vendor/angular-google-chart/ng-google-chart.js"></script>
-        <script src="vendor/angular-route/angular-route.js"></script>
-        <script src="vendor/toastr/toastr.js"></script>
-        <!--endbower -->
+            <!-- bower:js -->
+            <script src="vendor/jquery/dist/jquery.js"></script>
+            <script src="vendor/angular/angular.js"></script>
+            <script src="vendor/angular-animate/angular-animate.js"></script>
+            <script src="vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+            <script src="vendor/angular-google-chart/ng-google-chart.js"></script>
+            <script src="vendor/angular-route/angular-route.js"></script>
+            <script src="vendor/toastr/toastr.js"></script>
+            <!--endbower -->
         <!-- endbuild -->
+        
         <!-- build:js js/app.js -->
-        <!-- inject:js -->
-        <script src="/src/app/modules/dashboard/dashboard.module.js"></script>
-        <script src="/src/app/modules/dashboard/dashboard.js"></script>
-        <script src="/src/app/modules/dashboard/config.route.js"></script>
-        <script src="/src/app/blocks/router/router.module.js"></script>
-        <script src="/src/app/blocks/router/routehelper.js"></script>
-        <script src="/src/app/blocks/logger/logger.module.js"></script>
-        <script src="/src/app/blocks/logger/logger.js"></script>
-        <script src="/src/app/blocks/exception/exception.module.js"></script>
-        <script src="/src/app/blocks/exception/exception.js"></script>
-        <script src="/src/app/blocks/exception/exception-handler.provider.js"></script>
-        <script src="/src/app/core/core.module.js"></script>
-        <script src="/src/app/core/dataservice.js"></script>
-        <script src="/src/app/core/config.js"></script>
-        <script src="/src/app/app.module.js"></script>
-        <!-- endinject -->
-        <!-- inject:templates:js -->
-        <!-- endinject -->
+            <!-- inject:js -->
+            <script src="/src/app/modules/dashboard/dashboard.module.js"></script>
+            <script src="/src/app/modules/dashboard/dashboard.js"></script>
+            <script src="/src/app/modules/dashboard/config.route.js"></script>
+            <script src="/src/app/blocks/router/router.module.js"></script>
+            <script src="/src/app/blocks/router/routehelper.js"></script>
+            <script src="/src/app/blocks/logger/logger.module.js"></script>
+            <script src="/src/app/blocks/logger/logger.js"></script>
+            <script src="/src/app/blocks/exception/exception.module.js"></script>
+            <script src="/src/app/blocks/exception/exception.js"></script>
+            <script src="/src/app/blocks/exception/exception-handler.provider.js"></script>
+            <script src="/src/app/core/core.module.js"></script>
+            <script src="/src/app/core/dataservice.js"></script>
+            <script src="/src/app/core/config.js"></script>
+            <script src="/src/app/app.module.js"></script>
+            <!-- endinject -->
+
+            <!-- inject:templates:js -->
+            <script src="/.tmp/templates.js"></script>
+            <!-- endinject -->
         <!-- endbuild -->
     </body>
 </html>

@@ -11,7 +11,7 @@ module.exports = function() {
         fonts: './vendor/bootstrap/dist/fonts/*.*',
         html: './src/**/*.html',
         images: './src/images/**/*.*',
-        index: 'index.html',
+        index: './index.html',
         js: [
             './src/**/*.module.js',
             './src/**/*.js',
