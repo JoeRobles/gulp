@@ -17,8 +17,8 @@
     };
 
     core.value('config', config);
-
     core.config(configure);
+    
     configure.$inject = ['$logProvider', '$routeProvider', 'routehelperConfigProvider', 'exceptionHandlerProvider'];
     /* @ngInject */
     function configure ($logProvider, $routeProvider, routehelperConfigProvider, exceptionHandlerProvider) {
@@ -31,10 +31,15 @@
         routehelperConfigProvider.config.$routeProvider = $routeProvider;
         routehelperConfigProvider.config.docTitle = 'NG-Modular: ';
         var resolveAlways = {
-             ready: ['dataservice', function (dataservice) {
-                return dataservice.ready();
-             }]
+            ready: ready
         };
+        
+        ready.$inject = ['dataservice'];
+        /* @ngInject */
+        function ready(dataservice) {
+            dataservice.ready();
+        }
+
         routehelperConfigProvider.config.resolveAlways = resolveAlways;
 
         // Configure the common exception handler

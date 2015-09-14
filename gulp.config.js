@@ -15,8 +15,13 @@ module.exports = function() {
         js: [
             './src/**/*.module.js',
             './src/**/*.js',
-            '!./src/**/*.specs.js'
+            '!./src/**/*.spec.js'
         ],
+        serverIntegrationSpecs: ['./src/tests/server-integration/**/*.spec.js'],
+        optimized: {
+            app: 'app.js',
+            lib: 'lib.js'
+        },
         scss: './src/scss/*.scss',
         temp: './.tmp/',
         templateCache: {
@@ -39,5 +44,34 @@ module.exports = function() {
         return options;
     };
     
+    config.karma = getKarmaOptions();
+    
     return config;
+    
+    ////////
+    
+    function getKarmaOptions() {
+        var options = {
+            files: [].concat(
+                bowerFiles,
+                config.specHelpers,
+                './src/**/*.module.js',
+                './src/**/*.js',
+                temp + config.templateCache.file,
+                config.serverIntegrationSpecs
+            ),
+            exclude: [],
+            coverage: {
+                dir: './report/coverage',
+                reporters: [
+                    { type: 'html', subdir: 'report-html' },
+                    { type: 'lcov', subdir: 'report-lcov' },
+                    { type: 'text-summary' }
+                ]
+            },
+        };
+        options.preprocesors['./src/**/!(*.spec)+(.js)'] = ['coverage']
+        
+        return options;
+    }
 };

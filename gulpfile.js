@@ -98,7 +98,7 @@ gulp.task('clean-js', function(){
 });
 
 gulp.task('clean-all', function(){
-    var delconfig = [].concat(config.build);
+    var delconfig = [].concat(config.build, config.temp);
     log('Cleaning all: ' + plugin.util.colors.blue(delconfig));
     del(delconfig);
 });
@@ -114,7 +114,7 @@ gulp.task('clean-code', function(){
     clean(files);
 });
 
-gulp.task('templatecache', ['lint-js','clean-js'], function(){
+gulp.task('templatecache', ['lint-html'], function(){
     log('Creating AngularJS $templateCache');
     
     return gulp
@@ -145,7 +145,7 @@ gulp.task('wiredep', function(){
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('inject', ['styles', 'templatecache', 'wiredep'], function(){
+gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(){
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
@@ -164,23 +164,39 @@ gulp.task('inject', ['styles', 'templatecache', 'wiredep'], function(){
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('serve-dev', function() {
+gulp.task('serve-dev', ['wiredep'], function() {
     log('Starting browser-sync');
     startBrowserSync();
 });
 
 gulp.task('optimize', ['inject'], function(){
     var assets = plugin.useref.assets({searchPath: './'});
+    var cssFilter = plugin.filter(['**/*.css'], {restore: true});
+    var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
+    var jsAppFilter = plugin.filter('**/' + config.optimized.app, {restore: true});
     log('Optimizing the javascritp, css, html');
 
     return gulp
         .src(config.index)
         .pipe(plugin.plumber())
         .pipe(assets)
+        .pipe(cssFilter)
+        .pipe(plugin.csso())
+        .pipe(cssFilter.restore)
+        .pipe(jsLibFilter)
+        .pipe(plugin.uglify())
+        .pipe(jsLibFilter.restore)
+        .pipe(jsAppFilter)
+        .pipe(plugin.ngAnnotate())
+        .pipe(plugin.uglify({mangle: false}))
+        .pipe(jsAppFilter.restore)
         .pipe(assets.restore())
         .pipe(plugin.useref())
-        .pipe(gulp.dest(config.build))
-    ;
+        .pipe(gulp.dest(config.build));
+});
+
+gulp.task('test', ['vet', 'templatecache'], function(){
+    startTests(true /* singleRun */);
 });
 
 ////////
@@ -190,13 +206,37 @@ function changeEvent(event) {
     log('File ' + event.path.replace(srcPattern, '') + ' ' + event.type);
 }
 
+function clean(path) {
+    log('Cleaning: ' + plugin.util.colors.blue(path));
+    del(path);
+}
+
+function errorLogger(error) {
+    log('*** Start of Error ***');
+    log(error);
+    log('*** End of Error ***');
+    this.emit('end');
+}
+
+function log(msg) {
+    if (typeof(msg) === 'object') {
+        for (var item in msg) {
+            if (msg.hasOwnProperty(item)) {
+                plugin.util.log(plugin.util.colors.blue(msg[item]));
+            }
+        }
+    } else {
+        plugin.util.log(plugin.util.colors.blue(msg));
+    }
+}
+
 function startBrowserSync(){
     if (browserSync.active) {
         return;
     }
     
     log('browser-sync started');
-    gulp.watch(config.scss, ['styles'])
+    gulp.watch([config.js, config.html], ['lint-js', 'lint-html'])
         .on('change', function(event){ changeEvent(event); });
     
     var options = {
@@ -224,26 +264,25 @@ function startBrowserSync(){
     browserSync(options);
 }
 
-function errorLogger(error) {
-    log('*** Start of Error ***');
-    log(error);
-    log('*** End of Error ***');
-    this.emit('end');
-}
-
-function clean(path) {
-    log('Cleaning: ' + plugin.util.colors.blue(path));
-    del(path);
-}
-
-function log(msg) {
-    if (typeof(msg) === 'object') {
-        for (var item in msg) {
-            if (msg.hasOwnProperty(item)) {
-                plugin.util.log(plugin.util.colors.blue(msg[item]));
-            }
+function startTests(singleRun) {
+    var karma = require('karma').server;
+    var excludeFiles = [];
+    var serverSpecs = config.serverIntegrationSpecs;
+    
+    excludeFiles = serverSpecs;
+    
+    karma.start({
+        config: __dirname + 'karma.conf.js',
+        exclude: excludeFiles,
+        single: !!singleRun
+    }, karmaCompleted)
+    
+    function karmaCompleted(karmaResult){
+        log('Karma completed!');
+        if (karmaResult === 1){
+            done('karma: tests failed with code ' + karmaResult);
+        } else {
+            done();
         }
-    } else {
-        plugin.util.log(plugin.util.colors.blue(msg));
     }
 }
