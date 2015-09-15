@@ -3,7 +3,8 @@ var args = require('yargs').argv;
 var browserSync = require('browser-sync');
 var config = require('./gulp.config')();
 var del = require('del');
-var karma = require('karma').Server;
+var path = require('path');
+var _ = require('lodash');
 
 var plugin = require('gulp-load-plugins')({lazy: true});
 
@@ -172,7 +173,7 @@ gulp.task('serve-dev', ['wiredep'], function() {
     startBrowserSync();
 });
 
-gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
+gulp.task('optimize', ['inject', 'test'], function(){
     var assets = plugin.useref.assets({searchPath: config.client});
     var cssFilter = plugin.filter('**/*.css', {restore: true});
     var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
@@ -201,20 +202,33 @@ gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
 /**
  * Run test once and exit
  */
-gulp.task('test', function () {
-    new karma({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }).start();
+gulp.task('test', function (done) {
+    startTests(true /* singleRun */, done);
 });
 
 /**
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('tdd', function () {
-    new karma({
-        configFile: __dirname + '/karma.conf.js'
-    }).start();
+    startTests(false /* watch */, done);
+});
+
+/**
+ * Build everything
+ * This is separate so we can run tests on
+ * optimize before handling image or fonts
+ */
+gulp.task('build', ['optimize', 'images', 'fonts'], function() {
+    log('Building everything');
+
+    var msg = {
+        title: 'gulp build',
+        subtitle: 'Deployed to the build folder',
+        message: 'Running `gulp serve-build`'
+    };
+    del(config.temp);
+    log(msg);
+    notify(msg);
 });
 
 ////////
@@ -236,6 +250,10 @@ function errorLogger(error) {
     this.emit('end');
 }
 
+function karmaCompleted(){
+    log('Karma completed!');
+}
+
 function log(msg) {
     if (typeof(msg) === 'object') {
         for (var item in msg) {
@@ -246,6 +264,19 @@ function log(msg) {
     } else {
         plugin.util.log(plugin.util.colors.blue(msg));
     }
+}
+/**
+ * Show OS level notification using node-notifier
+ */
+function notify(options) {
+    var notifier = require('node-notifier');
+    var notifyOptions = {
+        sound: 'Bottle',
+        contentImage: path.join(__dirname, 'gulp.png'),
+        icon: path.join(__dirname, 'gulp.png')
+    };
+    _.assign(notifyOptions, options);
+    notifier.notify(notifyOptions);
 }
 
 function startBrowserSync(){
@@ -282,6 +313,22 @@ function startBrowserSync(){
     browserSync(options);
 }
 
-function karmaCompleted(){
-    log('Karma completed!');
+function startTests(singleRun, done) {
+    var karma = require('karma').Server;
+    var excludeFiles = [];
+    
+    karma.start({
+        configFile: config.karma.configFile,
+        exclude: excludeFiles,
+        singleRun: !!singleRun
+    }, karmaCompleted);
+    
+    function karmaCompleted(karmaResult) {
+        log('Karma completed');
+        if (karmaResult === 1) {
+            done('Karma: test failed with code '+ karmaResult);
+        } else {
+            done();
+        }
+    }
 }

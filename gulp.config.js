@@ -1,6 +1,7 @@
 module.exports = function() {
     var client= './src/';
     var clientApp = client + 'app/';
+    var here = __dirname + '/';
     var report = './report/';
     var root = './';
     var temp = './.tmp/';
@@ -36,7 +37,8 @@ module.exports = function() {
         ],
         karma: {
             files: karmaFiles,
-            exclude: []
+            exclude: [],
+            configFile: here + 'karma.conf.js'
         },
         optimized: {
             app: 'app.js',
