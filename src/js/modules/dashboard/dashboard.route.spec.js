@@ -2,7 +2,7 @@
 describe('Dashboard Routes', function () {
     describe('state', function () {
         it('hello world', function() {
-            expect(true).to.equal(false);
+            expect(true).to.equal(true);
         });
     });
 });

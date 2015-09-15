@@ -7,10 +7,9 @@ module.exports = function(config) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['mocha', 'chai', 'sinon', 'chai-sinon'],
         // list of files / patterns to load in the browser
-        files: gulpConfig.karmaFiles,
+        files: gulpConfig.karma.files,
         // list of files to exclude
-        exclude: [
-        ],
+        exclude: gulpConfig.serverIntegrationSpecs,
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
@@ -18,6 +17,14 @@ module.exports = function(config) {
         },
         proxies: {
             '/': 'http://localhost:8888/'
+        },
+        coverageReporter: {
+            dir: './report/coverage/',
+            reporters: [
+                { type: 'html', subdir: 'report-html' },
+                { type: 'lcov', subdir: 'report-lcov' },
+                { type: 'text-summary' }
+            ]
         },
         // test results reporter to use
         // possible values: 'dots', 'progress'

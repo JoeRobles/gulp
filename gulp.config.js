@@ -34,7 +34,10 @@ module.exports = function() {
             client + '**/*.js',
             '!' + client + '**/*.spec.js'
         ],
-        karmaFiles: karmaFiles,
+        karma: {
+            files: karmaFiles,
+            exclude: []
+        },
         optimized: {
             app: 'app.js',
             lib: 'lib.js'
