@@ -209,7 +209,7 @@ gulp.task('test', function (done) {
 /**
  * Watch for file changes and re-run tests on each change
  */
-gulp.task('tdd', function () {
+gulp.task('autotest', function (done) {
     startTests(false /* watch */, done);
 });
 
