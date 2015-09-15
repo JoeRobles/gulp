@@ -6,122 +6,134 @@ var del = require('del');
 var path = require('path');
 var _ = require('lodash');
 
-var plugin = require('gulp-load-plugins')({lazy: true});
+var plugin = require('gulp-load-plugins')({
+    lazy: true
+});
 
 gulp.task('help', plugin.taskListing);
 
 gulp.task('default', ['help']);
 
-gulp.task('lint-js', function() {
+gulp.task('lint-js', function () {
     log('Analyzing source with JSHint');
     return gulp
         .src(config.alljs)
         .pipe(plugin.if(args.verbose, plugin.print()))
         .pipe(plugin.jshint())
-        .pipe(plugin.jshint.reporter('jshint-stylish', {verbose: true}))
+        .pipe(plugin.jshint.reporter('jshint-stylish', {
+            verbose: true
+        }))
         .pipe(plugin.jshint.reporter('fail'));
 });
 
-gulp.task('watch-js', function(){
+gulp.task('watch-js', function () {
     log('Watching Javascript files');
     gulp.watch(config.alljs, ['lint-js']);
 });
 
-gulp.task('lint-scss', function() {
+gulp.task('lint-scss', function () {
     log('Linting Scss files');
     gulp.src(config.scss)
-        .pipe(plugin.scssLint({ customReport: plugin.scssLintStylish }));
+        .pipe(plugin.scssLint({
+            customReport: plugin.scssLintStylish
+        }));
 });
 
-gulp.task('styles', ['lint-scss', 'clean-styles'], function(){
+gulp.task('styles', ['lint-scss', 'clean-styles'], function () {
     log('Compiling Scss --> CSS');
-    
+
     return gulp
         .src(config.scss)
         .pipe(plugin.plumber())
         .pipe(plugin.sass())
-        .pipe(plugin.autoprefixer({browsers: ['last 2 version', '> 5%']}))
+        .pipe(plugin.autoprefixer({
+            browsers: ['last 2 version', '> 5%']
+        }))
         .pipe(gulp.dest(config.temp));
 });
 
-gulp.task('clean-styles', function(){
+gulp.task('clean-styles', function () {
     var delcss = [].concat(config.build + 'css/*.css', config.temp + '*.css');
     log('Cleaning css files');
     clean(delcss);
 });
 
-gulp.task('watch-scss', function(){
+gulp.task('watch-scss', function () {
     log('Watching Scss files');
     gulp.watch(config.scss, ['lint-scss']);
 });
 
-gulp.task('lint-html', function() {
+gulp.task('lint-html', function () {
     log('Linting Html files');
     return gulp.src(config.html)
         .pipe(plugin.htmllint());
 });
 
-gulp.task('watch-html', function(){
+gulp.task('watch-html', function () {
     log('Watching Html files');
     gulp.watch(config.html, ['lint-html']);
 });
 
-gulp.task('fonts', ['clean-fonts'], function(){
+gulp.task('fonts', ['clean-fonts'], function () {
     log('Copying fonts');
-    
+
     return gulp
         .src(config.fonts)
         .pipe(gulp.dest(config.build + 'fonts'));
 });
 
-gulp.task('clean-fonts', function(){
+gulp.task('clean-fonts', function () {
     log('Cleaning font files');
     clean(config.build + 'fonts/*.*');
 });
 
-gulp.task('images', ['clean-images'], function(){
+gulp.task('images', ['clean-images'], function () {
     log('Copying and optimizing the images');
-    
+
     return gulp
         .src(config.images)
-        .pipe(plugin.imagemin({optimizationLevel:4}))
+        .pipe(plugin.imagemin({
+            optimizationLevel: 4
+        }))
         .pipe(gulp.dest(config.build + 'images'));
 });
 
-gulp.task('clean-images', function(){
+gulp.task('clean-images', function () {
     log('Cleaning image files');
     clean(config.build + 'images/*.*');
 });
 
-gulp.task('clean-js', function(){
+gulp.task('clean-js', function () {
     var deljs = [].concat(config.build + 'js/*.js', config.temp + '*.js');
     log('Cleaning Javascript files');
     clean(deljs);
 });
 
-gulp.task('clean-all', function(){
+gulp.task('clean-all', function () {
     var delconfig = [].concat(config.build, config.temp);
     log('Cleaning all: ' + plugin.util.colors.blue(delconfig));
     del(delconfig);
 });
 
-gulp.task('clean-code', function(){
+gulp.task('clean-code', function () {
     var files = [].concat(
-            config.build + 'css/*.css',
-            config.build + 'fonts/*.*',
-            config.build + 'images/*.*',
-            config.build + 'js/*.js'
+        config.build + 'css/*.css',
+        config.build + 'fonts/*.*',
+        config.build + 'images/*.*',
+        config.build + 'js/*.js'
     );
     log('Cleaning prod files');
     clean(files);
 });
 
-gulp.task('templatecache', ['lint-html'], function(){
+gulp.task('templatecache', ['lint-html'], function () {
     log('Creating AngularJS $templateCache');
-    
+
     return gulp
         .src([config.html, '!' + config.index])
-        .pipe(plugin.minifyHtml({empty: true}))
+        .pipe(plugin.minifyHtml({
+            empty: true
+        }))
         .pipe(plugin.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
@@ -129,7 +141,7 @@ gulp.task('templatecache', ['lint-html'], function(){
         .pipe(gulp.dest(config.temp));
 });
 
-gulp.task('wiredep', function(){
+gulp.task('wiredep', function () {
     var options = config.getWiredepDefaultOptions();
     var wiredep = require('wiredep').stream;
     log('Wire up the bower css js and our app js into the html');
@@ -140,44 +152,56 @@ gulp.task('wiredep', function(){
         .pipe(
             plugin.inject(
                 gulp
-                    .src(config.js)
-                    .pipe(plugin.angularFilesort()),
-                { relative: true }
+                .src(config.js)
+                .pipe(plugin.angularFilesort()), {
+                    relative: true
+                }
             )
         )
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(){
+gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function () {
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
         .src(config.index)
         .pipe(
             plugin.inject(
-                gulp.src(config.css),
-                { relative: true }
+                gulp.src(config.css), {
+                    relative: true
+                }
             )
         )
         .pipe(
             plugin.inject(
-                gulp.src(config.temp + config.templateCache.file),
-                { starttag: '<!-- inject:templates:js -->', relative: true }
+                gulp.src(config.temp + config.templateCache.file), {
+                    starttag: '<!-- inject:templates:js -->',
+                    relative: true
+                }
             )
         )
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('serve-dev', ['wiredep'], function() {
+gulp.task('serve-dev', ['wiredep'], function () {
     log('Starting browser-sync');
-    startBrowserSync();
+    startBrowserSync(true, false);
 });
 
-gulp.task('optimize', ['inject', 'test'], function(){
-    var assets = plugin.useref.assets({searchPath: config.client});
-    var cssFilter = plugin.filter('**/*.css', {restore: true});
-    var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
-    var jsAppFilter = plugin.filter('**/' + config.optimized.app, {restore: true});
+gulp.task('optimize', ['inject', 'test'], function () {
+    var assets = plugin.useref.assets({
+        searchPath: config.client
+    });
+    var cssFilter = plugin.filter('**/*.css', {
+        restore: true
+    });
+    var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {
+        restore: true
+    });
+    var jsAppFilter = plugin.filter('**/' + config.optimized.app, {
+        restore: true
+    });
     log('Optimizing the javascritp, css, html');
 
     return gulp
@@ -203,14 +227,14 @@ gulp.task('optimize', ['inject', 'test'], function(){
  * Run test once and exit
  */
 gulp.task('test', function (done) {
-    startTests(true /* singleRun */, done);
+    startTests(true /* singleRun */ , done);
 });
 
 /**
  * Watch for file changes and re-run tests on each change
  */
 gulp.task('autotest', function (done) {
-    startTests(false /* watch */, done);
+    startTests(false /* watch */ , done);
 });
 
 /**
@@ -218,7 +242,7 @@ gulp.task('autotest', function (done) {
  * This is separate so we can run tests on
  * optimize before handling image or fonts
  */
-gulp.task('build', ['optimize', 'images', 'fonts'], function() {
+gulp.task('build', ['optimize', 'images', 'fonts'], function () {
     log('Building everything');
 
     var msg = {
@@ -229,6 +253,49 @@ gulp.task('build', ['optimize', 'images', 'fonts'], function() {
     del(config.temp);
     log(msg);
     notify(msg);
+});
+
+gulp.task('build-specs', ['templatecache'], function () {
+    log('building the spec runner');
+
+    var wiredep = require('wiredep').stream;
+    var options = config.getWiredepDefaultOptions();
+
+    return gulp
+        .src(config.specRunner)
+        .pipe(wiredep(options))
+        .pipe(plugin.inject(
+            gulp.src(config.testlibraries), {
+                name: 'inject:testlibraries',
+                read: false
+            }
+        ))
+        .pipe(plugin.inject(gulp.src(config.js)))
+        .pipe(plugin.inject(
+            gulp.src(config.specHelpers), {
+                name: 'inject:spechelpers',
+                read: false
+            }
+        ))
+        .pipe(plugin.inject(
+            gulp.src(config.specs), {
+                name: 'inject:specs',
+                read: false
+            }
+        ))
+        .pipe(plugin.inject(
+            gulp.src(config.temp + config.templateCache.file), {
+                name: 'inject:templates',
+                read: false
+            }
+        ))
+        .pipe(gulp.dest(config.client));
+});
+
+gulp.task('serve-specs', ['build-specs'], function (done) {
+    log('run the spec runner');
+    serve(true /* isDev*/ , true /* specRuner*/ );
+    done();
 });
 
 ////////
@@ -250,12 +317,8 @@ function errorLogger(error) {
     this.emit('end');
 }
 
-function karmaCompleted(){
-    log('Karma completed!');
-}
-
 function log(msg) {
-    if (typeof(msg) === 'object') {
+    if (typeof (msg) === 'object') {
         for (var item in msg) {
             if (msg.hasOwnProperty(item)) {
                 plugin.util.log(plugin.util.colors.blue(msg[item]));
@@ -279,22 +342,25 @@ function notify(options) {
     notifier.notify(notifyOptions);
 }
 
-function startBrowserSync(){
+function startBrowserSync(isDev, specRunner) {
     if (browserSync.active) {
         return;
     }
-    
+
     log('browser-sync started');
-    gulp.watch([config.js, config.html], ['lint-js', 'lint-html'])
-        .on('change', function(event){ changeEvent(event); });
-    
+
+    if (isDev) {
+        gulp.watch([config.js, config.html], ['lint-js', 'lint-html'])
+            .on('change', function (event) { changeEvent(event); });
+    }
+
     var options = {
         proxy: 'local.gulp.com:' + 80 + '/src/',
         port: 3000,
         files: [
             config.client + '**/*.*',
             '!' + config.scss,
-            config.build + 'css/*.css'
+            config.temp + '**/*.css'
         ],
         ghostMode: {
             clicks: true,
@@ -307,28 +373,36 @@ function startBrowserSync(){
         logLevel: 'debug',
         logPrefix: 'gulp-paterns',
         notify: true,
-        reloadDelay: 1000
+        reloadDelay: 0
     };
-    
+
+    if(specRunner){
+        options.startPath = config.specRunnerFile;
+    }
+
     browserSync(options);
 }
 
 function startTests(singleRun, done) {
     var karma = require('karma').Server;
     var excludeFiles = [];
-    
+
     karma.start({
         configFile: config.karma.configFile,
         exclude: excludeFiles,
         singleRun: !!singleRun
     }, karmaCompleted);
-    
+
     function karmaCompleted(karmaResult) {
         log('Karma completed');
         if (karmaResult === 1) {
-            done('Karma: test failed with code '+ karmaResult);
+            done('Karma: test failed with code ' + karmaResult);
         } else {
             done();
         }
     }
+}
+
+function serve(isDev, specRunner) {
+    startBrowserSync(isDev, specRunner);
 }
