@@ -3,6 +3,7 @@ var args = require('yargs').argv;
 var browserSync = require('browser-sync');
 var config = require('./gulp.config')();
 var del = require('del');
+var karma = require('karma').Server;
 
 var plugin = require('gulp-load-plugins')({lazy: true});
 
@@ -118,7 +119,7 @@ gulp.task('templatecache', ['lint-html'], function(){
     log('Creating AngularJS $templateCache');
     
     return gulp
-        .src([config.html, '!./src/index.html'])
+        .src([config.html, '!' + config.index])
         .pipe(plugin.minifyHtml({empty: true}))
         .pipe(plugin.angularTemplatecache(
             config.templateCache.file,
@@ -143,7 +144,7 @@ gulp.task('wiredep', function(){
                 { relative: true }
             )
         )
-        .pipe(gulp.dest('./src/'));
+        .pipe(gulp.dest(config.client));
 });
 
 gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(){
@@ -163,7 +164,7 @@ gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(
                 { starttag: '<!-- inject:templates:js -->', relative: true }
             )
         )
-        .pipe(gulp.dest('./src'));
+        .pipe(gulp.dest(config.client));
 });
 
 gulp.task('serve-dev', ['wiredep'], function() {
@@ -172,7 +173,7 @@ gulp.task('serve-dev', ['wiredep'], function() {
 });
 
 gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
-    var assets = plugin.useref.assets({searchPath: './src/'});
+    var assets = plugin.useref.assets({searchPath: config.client});
     var cssFilter = plugin.filter('**/*.css', {restore: true});
     var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
     var jsAppFilter = plugin.filter('**/' + config.optimized.app, {restore: true});
@@ -197,8 +198,23 @@ gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
         .pipe(gulp.dest(config.build));
 });
 
-gulp.task('test', ['vet', 'templatecache'], function(){
-    startTests(true /* singleRun */);
+/**
+ * Run test once and exit
+ */
+gulp.task('test', function () {
+    new karma({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }).start();
+});
+
+/**
+ * Watch for file changes and re-run tests on each change
+ */
+gulp.task('tdd', function () {
+    new karma({
+        configFile: __dirname + '/karma.conf.js'
+    }).start();
 });
 
 ////////
@@ -242,10 +258,10 @@ function startBrowserSync(){
         .on('change', function(event){ changeEvent(event); });
     
     var options = {
-        proxy: 'local.gulp.com:' + 80,
+        proxy: 'local.gulp.com:' + 80 + '/src/',
         port: 3000,
         files: [
-            './src/**/*.*',
+            config.client + '**/*.*',
             '!' + config.scss,
             config.build + 'css/*.css'
         ],
@@ -266,25 +282,6 @@ function startBrowserSync(){
     browserSync(options);
 }
 
-function startTests(singleRun) {
-    var karma = require('karma').server;
-    var excludeFiles = [];
-    var serverSpecs = config.serverIntegrationSpecs;
-    
-    excludeFiles = serverSpecs;
-    
-    karma.start({
-        config: __dirname + 'karma.conf.js',
-        exclude: excludeFiles,
-        single: !!singleRun
-    }, karmaCompleted)
-    
-    function karmaCompleted(karmaResult){
-        log('Karma completed!');
-        if (karmaResult === 1){
-            done('karma: tests failed with code ' + karmaResult);
-        } else {
-            done();
-        }
-    }
+function karmaCompleted(){
+    log('Karma completed!');
 }

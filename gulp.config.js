@@ -1,29 +1,50 @@
 module.exports = function() {
+    var client= './src/';
+    var clientApp = client + 'app/';
+    var report = './report/';
+    var root = './';
+    var temp = './.tmp/';
+    var wiredep = require('wiredep');
+    var bowerFiles = wiredep({devDependencies: true}).js;
+    var karmaFiles = bowerFiles.concat(
+            client + 'test-helpers/*.js',
+            client + '**/*.module.js',
+            client + '**/*.js',
+            temp + 'templates.js',
+            client + 'tests/server-integration/**/*.spec.js'
+        );
     var config = {
-        alljs: './src/**/*.js',
+        allcss: client + '**/*.css',
+        alljs: client + '**/*.js',
         bower: {
             json: require('./bower.json'),
             directory: './vendor/',
             ignorePath: '../..'
         },
         build: './dist/',
-        css: './.tmp/style.css',
+        client: client,
+        clientApp: clientApp,
+        css: temp + 'style.css',
         fonts: './vendor/bootstrap/dist/fonts/*.*',
-        html: './src/**/*.html',
-        images: './src/images/**/*.*',
-        index: './src/index.html',
+        html: client + '**/*.html',
+        images: client + 'images/**/*.*',
+        index: client + 'index.html',
         js: [
-            './src/**/*.module.js',
-            './src/**/*.js',
-            '!./src/**/*.spec.js'
+            client + '**/*.module.js',
+            client + '**/*.js',
+            '!' + client + '**/*.spec.js'
         ],
-        serverIntegrationSpecs: ['./src/tests/server-integration/**/*.spec.js'],
+        karmaFiles: karmaFiles,
         optimized: {
             app: 'app.js',
             lib: 'lib.js'
         },
-        scss: './src/scss/*.scss',
-        temp: './.tmp/',
+        report: report,
+        root: root,
+        scss: client + 'scss/*.scss',
+        serverIntegrationSpecs: [client + 'tests/server-integration/**/*.spec.js'],
+        specHelpers: [client + 'test-helpers/*.js'],
+        temp: temp,
         templateCache: {
             file: 'templates.js',
             options: {
@@ -44,31 +65,5 @@ module.exports = function() {
         return options;
     };
     
-    config.karma = getKarmaOptions();
-    
     return config;
-    
-    ////////
-    
-    function getKarmaOptions() {
-        var options = {
-            files: [].concat(
-                config.specHelpers,
-                './src/**/*.module.js',
-                './src/**/*.js',
-                config.serverIntegrationSpecs
-            ),
-            exclude: [],
-            coverage: {
-                dir: './report/coverage',
-                reporters: [
-                    { type: 'html', subdir: 'report-html' },
-                    { type: 'lcov', subdir: 'report-lcov' },
-                    { type: 'text-summary' }
-                ]
-            },
-        };
-        
-        return options;
-    }
 };

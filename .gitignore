@@ -3,3 +3,4 @@ vendor/
 .tmp/
 dist/
 nbproject/
+coverage/
