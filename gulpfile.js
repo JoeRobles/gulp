@@ -169,9 +169,9 @@ gulp.task('serve-dev', ['wiredep'], function() {
     startBrowserSync();
 });
 
-gulp.task('optimize', ['inject'], function(){
+gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
     var assets = plugin.useref.assets({searchPath: './'});
-    var cssFilter = plugin.filter(['**/*.css'], {restore: true});
+    var cssFilter = plugin.filter('**/*.css', {restore: true});
     var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
     var jsAppFilter = plugin.filter('**/' + config.optimized.app, {restore: true});
     log('Optimizing the javascritp, css, html');
@@ -188,7 +188,7 @@ gulp.task('optimize', ['inject'], function(){
         .pipe(jsLibFilter.restore)
         .pipe(jsAppFilter)
         .pipe(plugin.ngAnnotate())
-        .pipe(plugin.uglify({mangle: false}))
+        .pipe(plugin.uglify())
         .pipe(jsAppFilter.restore)
         .pipe(assets.restore())
         .pipe(plugin.useref())

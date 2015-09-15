@@ -53,11 +53,9 @@ module.exports = function() {
     function getKarmaOptions() {
         var options = {
             files: [].concat(
-                bowerFiles,
                 config.specHelpers,
                 './src/**/*.module.js',
                 './src/**/*.js',
-                temp + config.templateCache.file,
                 config.serverIntegrationSpecs
             ),
             exclude: [],
@@ -70,7 +68,6 @@ module.exports = function() {
                 ]
             },
         };
-        options.preprocesors['./src/**/!(*.spec)+(.js)'] = ['coverage']
         
         return options;
     }
