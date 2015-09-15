@@ -17,7 +17,7 @@
             {
                 url: '/',
                 config: {
-                    templateUrl: 'src/app/modules/dashboard/dashboard.html',
+                    templateUrl: 'js/modules/dashboard/dashboard.html',
                     controller: 'Dashboard',
                     controllerAs: 'vm',
                     title: 'dashboard'

@@ -118,7 +118,7 @@ gulp.task('templatecache', ['lint-html'], function(){
     log('Creating AngularJS $templateCache');
     
     return gulp
-        .src(config.html)
+        .src([config.html, '!./src/index.html'])
         .pipe(plugin.minifyHtml({empty: true}))
         .pipe(plugin.angularTemplatecache(
             config.templateCache.file,
@@ -139,10 +139,11 @@ gulp.task('wiredep', function(){
             plugin.inject(
                 gulp
                     .src(config.js)
-                    .pipe(plugin.angularFilesort())
+                    .pipe(plugin.angularFilesort()),
+                { relative: true }
             )
         )
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./src/'));
 });
 
 gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(){
@@ -152,16 +153,17 @@ gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function(
         .src(config.index)
         .pipe(
             plugin.inject(
-                gulp.src(config.css)
+                gulp.src(config.css),
+                { relative: true }
             )
         )
         .pipe(
             plugin.inject(
                 gulp.src(config.temp + config.templateCache.file),
-                { starttag: '<!-- inject:templates:js -->' }
+                { starttag: '<!-- inject:templates:js -->', relative: true }
             )
         )
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./src'));
 });
 
 gulp.task('serve-dev', ['wiredep'], function() {
@@ -170,7 +172,7 @@ gulp.task('serve-dev', ['wiredep'], function() {
 });
 
 gulp.task('optimize', ['inject', 'fonts', 'images'], function(){
-    var assets = plugin.useref.assets({searchPath: './'});
+    var assets = plugin.useref.assets({searchPath: './src/'});
     var cssFilter = plugin.filter('**/*.css', {restore: true});
     var jsLibFilter = plugin.filter('**/' + config.optimized.lib, {restore: true});
     var jsAppFilter = plugin.filter('**/' + config.optimized.app, {restore: true});
