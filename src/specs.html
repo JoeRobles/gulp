@@ -53,14 +53,19 @@
         <script src="../vendor/angular-google-chart/ng-google-chart.js"></script>
         <script src="../vendor/angular-route/angular-route.js"></script>
         <script src="../vendor/toastr/toastr.js"></script>
+        <script src="../vendor/angular-mocks/angular-mocks.js"></script>
+        <script src="../vendor/angular-scenario/angular-scenario.js"></script>
+        <script src="../vendor/sinon/index.js"></script>
+        <script src="../vendor/bardjs/dist/bard.js"></script>
+        <script src="../vendor/bardjs/dist/bard-ngRouteTester.js"></script>
         <!-- endbower -->
 
         <!-- inject:js -->
         <script src="js/app.module.js"></script>
         <script src="js/core/core.module.js"></script>
         <script src="js/blocks/exception/exception.module.js"></script>
-        <script src="js/blocks/router/router.module.js"></script>
         <script src="js/blocks/logger/logger.module.js"></script>
+        <script src="js/blocks/router/router.module.js"></script>
         <script src="js/modules/dashboard/dashboard.module.js"></script>
         <script src="test-helpers/bind-polyfill.js"></script>
         <script src="test-helpers/mock-data.js"></script>
@@ -68,8 +73,8 @@
         <script src="js/core/dataservice.js"></script>
         <script src="js/blocks/exception/exception-handler.provider.js"></script>
         <script src="js/blocks/exception/exception.js"></script>
-        <script src="js/blocks/router/routehelper.js"></script>
         <script src="js/blocks/logger/logger.js"></script>
+        <script src="js/blocks/router/routehelper.js"></script>
         <script src="js/modules/dashboard/config.route.js"></script>
         <script src="js/modules/dashboard/dashboard.js"></script>
         <!-- endinject -->
@@ -81,6 +86,7 @@
 
         <!-- inject:specs:js -->
         <script src="js/modules/dashboard/dashboard.route.spec.js"></script>
+        <script src="tests/server-integration/dashboard.route.spec.js"></script>
         <!-- endinject -->
 
         <!-- inject:templates:js -->
