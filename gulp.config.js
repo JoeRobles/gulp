@@ -2,7 +2,7 @@ module.exports = function() {
     var wiredep = require('wiredep');
     var bowerFiles = wiredep({devDependencies: true})['js'];
     var client= './src/';
-    var clientApp = client + 'app/';
+    var clientApp = client + 'js/';
     var here = __dirname + '/';
     var karmaFiles = bowerFiles.concat(
         client + 'test-helpers/*.js',
@@ -53,7 +53,7 @@ module.exports = function() {
         specHelpers: [client + 'test-helpers/*.js'],
         specRunner: client + specRunnerFile,
         specRunnerFile: specRunnerFile,
-        specs: [clientApp + '**/*.spec.js'],
+        specs: clientApp + '**/*.spec.js',
         temp: temp,
         templateCache: {
             file: 'templates.js',

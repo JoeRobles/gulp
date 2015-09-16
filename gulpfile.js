@@ -130,7 +130,7 @@ gulp.task('templatecache', ['lint-html'], function () {
     log('Creating AngularJS $templateCache');
 
     return gulp
-        .src([config.html, '!' + config.index])
+        .src([config.html, '!' + config.index, '!' + config.specRunner])
         .pipe(plugin.minifyHtml({
             empty: true
         }))
@@ -166,21 +166,17 @@ gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function 
 
     return gulp
         .src(config.index)
-        .pipe(
-            plugin.inject(
-                gulp.src(config.css), {
-                    relative: true
-                }
-            )
-        )
-        .pipe(
-            plugin.inject(
-                gulp.src(config.temp + config.templateCache.file), {
+        .pipe(plugin.inject(
+            gulp.src(config.css),
+            { relative: true }
+        ))
+        .pipe(plugin.inject(
+                gulp.src(config.temp + config.templateCache.file),
+                {
                     starttag: '<!-- inject:templates:js -->',
                     relative: true
                 }
-            )
-        )
+        ))
         .pipe(gulp.dest(config.client));
 });
 
@@ -265,28 +261,39 @@ gulp.task('build-specs', ['templatecache'], function () {
         .src(config.specRunner)
         .pipe(wiredep(options))
         .pipe(plugin.inject(
-            gulp.src(config.testlibraries), {
+            gulp.src(config.testlibraries),
+            {
                 name: 'inject:testlibraries',
-                read: false
+                read: false,
+                relative: true
             }
         ))
-        .pipe(plugin.inject(gulp.src(config.js)))
         .pipe(plugin.inject(
-            gulp.src(config.specHelpers), {
+            gulp.src(config.js),
+            { read: false, relative: true }
+        ))
+        .pipe(plugin.inject(
+            gulp.src(config.specHelpers),
+            {
                 name: 'inject:spechelpers',
-                read: false
+                read: false,
+                relative: true
             }
         ))
         .pipe(plugin.inject(
-            gulp.src(config.specs), {
+            gulp.src(config.specs),
+            {
                 name: 'inject:specs',
-                read: false
+                read: false,
+                relative: true
             }
         ))
         .pipe(plugin.inject(
-            gulp.src(config.temp + config.templateCache.file), {
+            gulp.src(config.temp + config.templateCache.file),
+            {
                 name: 'inject:templates',
-                read: false
+                read: false,
+                relative: true
             }
         ))
         .pipe(gulp.dest(config.client));
@@ -378,6 +385,8 @@ function startBrowserSync(isDev, specRunner) {
 
     if(specRunner){
         options.startPath = config.specRunnerFile;
+        options.proxy = 'local.specs.com:' + 80 + '/src/';
+        options.port = 3001;
     }
 
     browserSync(options);
