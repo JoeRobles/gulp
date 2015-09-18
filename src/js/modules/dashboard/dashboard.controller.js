@@ -13,5 +13,6 @@
         var vm = this;
 
         vm.name = 'Joe';
+        vm.title = 'Dashboard';
     }
 })();

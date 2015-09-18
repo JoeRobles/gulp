@@ -275,7 +275,8 @@ gulp.task('build-specs', ['templatecache'], function () {
             }
         ))
         .pipe(plugin.inject(
-            gulp.src(config.js),
+            gulp.src(config.js)
+            .pipe(plugin.angularFilesort()),
             { read: false, relative: true }
         ))
         .pipe(plugin.inject(
