@@ -5,21 +5,17 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
         <title>Spec Runner</title>
-
         <style>
             body {
                 font: 20px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
                 padding-left: 20px;
             }
         </style>
-
         <!--BEWARE of using any app styles as @media can screw up tests -->
-
         <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
-
     </head>
-    <body>
 
+    <body>
         <h1><a href="specs.html">Spec Runner</a></h1>
         <p>
             Click on a <em>description title</em> to narrow the scope to just its specs
@@ -28,30 +24,29 @@
             Click on a <em>spec title</em> to see the test implementation.<br/>
             Click on <em>page title</em> to start over.
         </p>
-
         <div id="mocha"></div>
-
         <!-- inject:testlibraries:js -->
         <script src="../node_modules/mocha/mocha.js"></script>
         <script src="../node_modules/chai/chai.js"></script>
         <script src="../node_modules/mocha-clean/index.js"></script>
         <script src="../node_modules/sinon-chai/lib/sinon-chai.js"></script>
         <!-- endinject -->
-
         <script>
             expect = chai.expect;
             AssertionError = chai.AssertionError;
             mocha.setup('bdd');
             mocha.traceIgnores = ['mocha.js', 'chai.js', 'angular.js'];
         </script>
-
         <!-- bower:js -->
         <script src="../vendor/jquery/dist/jquery.js"></script>
         <script src="../vendor/angular/angular.js"></script>
         <script src="../vendor/angular-animate/angular-animate.js"></script>
         <script src="../vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
         <script src="../vendor/angular-google-chart/ng-google-chart.js"></script>
-        <script src="../vendor/angular-route/angular-route.js"></script>
+        <script src="../vendor/angular-sanitize/angular-sanitize.js"></script>
+        <script src="../vendor/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="../vendor/extras.angular.plus/ngplus-overlay.js"></script>
+        <script src="../vendor/moment/moment.js"></script>
         <script src="../vendor/toastr/toastr.js"></script>
         <script src="../vendor/angular-mocks/angular-mocks.js"></script>
         <script src="../vendor/angular-scenario/angular-scenario.js"></script>
@@ -59,7 +54,6 @@
         <script src="../vendor/bardjs/dist/bard.js"></script>
         <script src="../vendor/bardjs/dist/bard-ngRouteTester.js"></script>
         <!-- endbower -->
-
         <!-- inject:js -->
         <script src="js/app.module.js"></script>
         <script src="js/core/core.module.js"></script>
@@ -70,32 +64,30 @@
         <script src="test-helpers/bind-polyfill.js"></script>
         <script src="test-helpers/mock-data.js"></script>
         <script src="js/core/config.js"></script>
+        <script src="js/core/constants.js"></script>
+        <script src="js/core/core.route.js"></script>
         <script src="js/core/dataservice.js"></script>
         <script src="js/blocks/exception/exception-handler.provider.js"></script>
         <script src="js/blocks/exception/exception.js"></script>
         <script src="js/blocks/logger/logger.js"></script>
-        <script src="js/blocks/router/routehelper.js"></script>
-        <script src="js/modules/dashboard/config.route.js"></script>
-        <script src="js/modules/dashboard/dashboard.js"></script>
+        <script src="js/blocks/router/route-helper.provider.js"></script>
+        <script src="js/modules/dashboard/dashboard.controller.js"></script>
+        <script src="js/modules/dashboard/dashboard.route.js"></script>
         <!-- endinject -->
-
         <!-- inject:spechelpers:js -->
         <script src="test-helpers/bind-polyfill.js"></script>
         <script src="test-helpers/mock-data.js"></script>
         <!-- endinject -->
-
         <!-- inject:specs:js -->
+        <script src="js/core/core.route.spec.js"></script>
+        <script src="js/blocks/exception/exception-handler.provider.spec.js"></script>
         <script src="js/modules/dashboard/dashboard.controller.spec.js"></script>
-        <script src="js/modules/dashboard/dashboard.route.spec.js"></script>
         <!-- endinject -->
-
         <!-- inject:templates:js -->
         <script src="../.tmp/templates.js"></script>
         <!-- endinject -->
-
         <script>
             mocha.run();
         </script>
-
     </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html data-ng-app="app" data-ng-strict-di>
     <head>
+        <base href="/src/">
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <meta name="viewport" content="width=device-width">
@@ -28,7 +29,8 @@
             <script src="../vendor/angular-bootstrap/ui-bootstrap.js"></script>
             <script src="../vendor/angular-bootstrap/ui-bootstrap-tpls.js"></script>
             <script src="../vendor/angular-google-chart/ng-google-chart.js"></script>
-            <script src="../vendor/angular-route/angular-route.js"></script>
+            <script src="../vendor/angular-sanitize/angular-sanitize.js"></script>
+            <script src="../vendor/angular-ui-router/release/angular-ui-router.js"></script>
             <script src="../vendor/bootstrap/dist/js/bootstrap.js"></script>
             <script src="../vendor/toastr/toastr.js"></script>
             <!--endbower -->
@@ -36,21 +38,19 @@
         <!-- build:js js/app.js -->
             <!-- inject:js -->
             <script src="js/blocks/router/router.module.js"></script>
-            <script src="js/blocks/router/routehelper.js"></script>
-            <script src="js/modules/dashboard/dashboard.module.js"></script>
-            <script src="js/modules/dashboard/dashboard.route.js"></script>
-            <script src="js/modules/dashboard/dashboard.controller.js"></script>
+            <script src="js/blocks/router/route-helper.provider.js"></script>
+            <script src="js/blocks/logger/logger.module.js"></script>
+            <script src="js/blocks/logger/logger.js"></script>
             <script src="js/blocks/exception/exception.module.js"></script>
             <script src="js/blocks/exception/exception.js"></script>
             <script src="js/blocks/exception/exception-handler.provider.js"></script>
-            <script src="js/blocks/logger/logger.module.js"></script>
-            <script src="js/blocks/logger/logger.js"></script>
             <script src="js/core/core.module.js"></script>
             <script src="js/core/dataservice.js"></script>
             <script src="js/core/core.route.js"></script>
             <script src="js/core/config.js"></script>
             <script src="test-helpers/mock-data.js"></script>
             <script src="test-helpers/bind-polyfill.js"></script>
+            <script src="js/modules/dashboard/dashboard.module.js"></script>
             <script src="js/app.module.js"></script>
             <!-- endinject -->
             <!-- inject:templates:js -->

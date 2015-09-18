@@ -10,7 +10,6 @@
 
     /**
      * Must configure the exception handling
-     * @return {[type]}
      */
     function exceptionHandlerProvider() {
         /* jshint validthis:true */
@@ -26,17 +25,20 @@
             return {config: this.config};
         };
     }
+
+    config.$inject = ['$provide'];
+
     /**
      * Configure by setting an optional string value for appErrorPrefix.
      * Accessible via config.appErrorPrefix (via config value).
-     * @param  {[type]} $provide
-     * @return {[type]}
-     * @ngInject
+     * @param  {Object} $provide
      */
-    config.$inject = ['$provide'];
+    /* @ngInject */
     function config($provide) {
         $provide.decorator('$exceptionHandler', extendExceptionHandler);
     }
+
+    extendExceptionHandler.$inject = ['$delegate', 'exceptionHandler', 'logger'];
 
     /**
      * Extend the $exceptionHandler service to also display a toast.
@@ -44,9 +46,8 @@
      * @param  {Object} exceptionHandler
      * @param  {Object} logger
      * @return {Function} the decorated $exceptionHandler service
-     * @ngInject
      */
-    extendExceptionHandler.$inject = ['$delegate', 'exceptionHandler', 'logger'];
+    /* @ngInject */
     function extendExceptionHandler($delegate, exceptionHandler, logger) {
         return function(exception, cause) {
             var appErrorPrefix = exceptionHandler.config.appErrorPrefix || '';

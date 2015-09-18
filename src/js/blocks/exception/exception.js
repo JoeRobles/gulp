@@ -4,18 +4,26 @@
     angular
         .module('blocks.exception')
         .factory('exception', exception);
-
-    exception.$inject = ['logger'];
+    
+    exception.$inject = ['$q', 'logger'];
     /* @ngInject */
-    function exception(logger) {
+    function exception($q, logger) {
         var service = {
             catcher: catcher
         };
         return service;
 
         function catcher(message) {
-            return function(reason) {
-                logger.error(message, reason);
+            return function(e) {
+                var thrownDescription;
+                var newMessage;
+                if (e.data && e.data.description) {
+                    thrownDescription = '\n' + e.data.description;
+                    newMessage = message + thrownDescription;
+                }
+                e.data.description = newMessage;
+                logger.error(newMessage);
+                return $q.reject(e);
             };
         }
     }

@@ -1,9 +1,9 @@
 {
   "name": "BoilerPlate",
-  "version": "0.0.1",
-  "repository": "",
-  "license": "MIT",
   "description": "Boiler plate project for Angular from scratch",
+  "version": "0.0.1",
+  "repository": "https://github.com/JoeRobles/gulp",
+  "license": "MIT",
   "devDependencies": {
     "bard": "0.0.5",
     "browser-sync": "^2.9.3",
@@ -14,8 +14,6 @@
     "gulp-angular-templatecache": "^1.7.0",
     "gulp-autoprefixer": "^3.0.1",
     "gulp-bower": "^0.0.10",
-    "gulp-concat-util": "^0.5.2",
-    "gulp-connect": "^2.2.0",
     "gulp-csso": "^1.0.0",
     "gulp-filter": "^3.0.1",
     "gulp-htmllint": "0.0.5",
@@ -63,6 +61,9 @@
     "yargs": "^3.24.0"
   },
   "scripts": {
-    "prestart": "gulp"
+    "prestart": "gulp",
+    "init": "npm install",
+    "install": "bower install",
+    "test": "gulp test"
   }
 }

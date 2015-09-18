@@ -1,4 +1,5 @@
-(function() {
+/* jshint -W117 */
+(function () {
     'use strict';
 
     var core = angular.module('app.core');
@@ -11,38 +12,22 @@
     }
 
     var config = {
-        appErrorPrefix: '[NG-Modular Error] ', //Configure the exceptionHandler decorator
+        appErrorPrefix: '[NG-Modular Error] ',
         appTitle: 'Angular Modular Demo',
         version: '1.0.0'
     };
 
     core.value('config', config);
+
     core.config(configure);
-    
-    configure.$inject = ['$logProvider', '$routeProvider', 'routehelperConfigProvider', 'exceptionHandlerProvider'];
+
+    configure.$inject = ['$logProvider', 'routerHelperProvider', 'exceptionHandlerProvider'];
     /* @ngInject */
-    function configure ($logProvider, $routeProvider, routehelperConfigProvider, exceptionHandlerProvider) {
-        // turn debugging off/on (no info or warn)
+    function configure($logProvider, routerHelperProvider, exceptionHandlerProvider) {
         if ($logProvider.debugEnabled) {
             $logProvider.debugEnabled(true);
         }
-
-        // Configure the common route provider
-        routehelperConfigProvider.config.$routeProvider = $routeProvider;
-        routehelperConfigProvider.config.docTitle = 'NG-Modular: ';
-        var resolveAlways = {
-            ready: ready
-        };
-        
-        ready.$inject = ['dataservice'];
-        /* @ngInject */
-        function ready(dataservice) {
-            dataservice.ready();
-        }
-
-        routehelperConfigProvider.config.resolveAlways = resolveAlways;
-
-        // Configure the common exception handler
         exceptionHandlerProvider.configure(config.appErrorPrefix);
+        routerHelperProvider.configure({docTitle: config.appTitle + ': '});
     }
 })();
