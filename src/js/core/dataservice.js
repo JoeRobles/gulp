@@ -15,12 +15,10 @@
 
         return service;
 
-        function getMessageCount() {/* return $q.when(72); */}
+        function getMessageCount() { return $q.when(72); }
 
         function getPeople() {
-/*
-
-             return $http.get('/api/people')
+            return $http.get('/api/people')
                 .then(success)
                 .catch(fail);
 
@@ -31,7 +29,6 @@
             function fail(e) {
                 return exception.catcher('XHR Failed for getPeople')(e);
             }
-*/
         }
     }
 })();

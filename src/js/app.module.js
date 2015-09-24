@@ -4,6 +4,7 @@
     angular.module('app', [
         'app.core',
 
-        'app.dashboard'
+        'app.dashboard',
+        'app.admin'
     ]);
 })();

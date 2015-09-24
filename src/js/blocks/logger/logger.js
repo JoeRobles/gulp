@@ -5,21 +5,23 @@
         .module('blocks.logger')
         .factory('logger', logger);
 
-    logger.$inject = ['$log'];
+    logger.$inject = ['$log', 'toastr'];
+
     /* @ngInject */
-    function logger($log) {
+    function logger($log, toastr) {
         var service = {
             showToasts: true,
+
             error   : error,
             info    : info,
             success : success,
             warning : warning,
+
             // straight to console; bypass toastr
             log     : $log.log
         };
 
         return service;
-        
         /////////////////////
 
         function error(message, data, title) {
