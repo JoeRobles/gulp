@@ -3,7 +3,8 @@
     
     angular.module('app', [
         'app.core',
-
-        'app.dashboard'
+        'app.widgets',
+        'app.dashboard',
+        'app.layout'
     ]);
 })();

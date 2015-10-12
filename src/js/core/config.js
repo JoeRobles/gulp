@@ -1,4 +1,3 @@
-/* jshint -W117 */
 (function () {
     'use strict';
 
@@ -6,15 +5,16 @@
 
     core.config(toastrConfig);
 
-    function toastrConfig() {
+    toastrConfig.$inject = ['toastr'];
+    /* @ngInject */
+    function toastrConfig(toastr) {
         toastr.options.timeOut = 4000;
         toastr.options.positionClass = 'toast-bottom-right';
     }
 
     var config = {
-        appErrorPrefix: '[NG-Modular Error] ',
-        appTitle: 'Angular Modular Demo',
-        version: '1.0.0'
+        appErrorPrefix: '[raro Error] ',
+        appTitle: 'raro'
     };
 
     core.value('config', config);
@@ -30,4 +30,5 @@
         exceptionHandlerProvider.configure(config.appErrorPrefix);
         routerHelperProvider.configure({docTitle: config.appTitle + ': '});
     }
+
 })();

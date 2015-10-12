@@ -35,7 +35,8 @@ gulp.task('lint-scss', function () {
     log('Linting Scss files');
     gulp.src(config.scss)
         .pipe(plugin.scssLint({
-            customReport: plugin.scssLintStylish
+            customReport: plugin.scssLintStylish,
+            config: '.scsslintrc'
         }));
 });
 
