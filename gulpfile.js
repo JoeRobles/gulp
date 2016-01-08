@@ -39,7 +39,11 @@ gulp.task('lint-scss', function () {
         }));
 });
 
-gulp.task('styles', ['lint-scss', 'clean-styles'], function () {
+gulp.task('styles', ['lint-scss', 'clean-styles', 'compile-scss'], function () {
+    
+});
+
+gulp.task('compile-scss', function () {
     log('Compiling Scss --> CSS');
 
     return gulp
@@ -74,7 +78,11 @@ gulp.task('watch-html', function () {
     gulp.watch(config.html, ['lint-html']);
 });
 
-gulp.task('fonts', ['clean-fonts'], function () {
+gulp.task('fonts', ['clean-fonts', 'copy-fonts'], function () {
+
+});
+
+gulp.task('copy-fonts', function () {
     log('Copying fonts');
 
     return gulp
@@ -87,7 +95,11 @@ gulp.task('clean-fonts', function () {
     clean(config.build + 'fonts/*.*');
 });
 
-gulp.task('images', ['clean-images'], function () {
+gulp.task('images', ['clean-images', 'optimize-images'], function () {
+
+});
+
+gulp.task('optimize-images', function () {
     log('Copying and optimizing the images');
 
     return gulp
@@ -126,7 +138,11 @@ gulp.task('clean-code', function () {
     clean(files);
 });
 
-gulp.task('templatecache', ['lint-html'], function () {
+gulp.task('templatecache', ['lint-html', 'create-cache-templates'], function () {
+
+});
+
+gulp.task('create-cache-templates', function () {
     log('Creating AngularJS $templateCache');
 
     return gulp
@@ -161,7 +177,11 @@ gulp.task('wiredep', function () {
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep'], function () {
+gulp.task('inject', ['styles', 'lint-js', 'templatecache', 'wiredep', 'wireup'], function () {
+    
+});
+
+gulp.task('wireup', function () {
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
@@ -185,7 +205,11 @@ gulp.task('serve-dev', ['wiredep'], function () {
     startBrowserSync(true, false);
 });
 
-gulp.task('optimize', ['inject', 'test'], function () {
+gulp.task('optimize', ['inject', 'prepare'], function () {
+
+});
+
+gulp.task('prepare', function () {
     var assets = plugin.useref.assets({
         searchPath: config.client
     });
@@ -251,7 +275,11 @@ gulp.task('build', ['optimize', 'images', 'fonts'], function () {
     notify(msg);
 });
 
-gulp.task('build-specs', ['templatecache'], function () {
+gulp.task('build-specs', ['templatecache', 'build-spec-files'], function () {
+    
+});
+
+gulp.task('build-spec-files', function () {
     log('building the spec runner');
 
     var wiredep = require('wiredep').stream;
