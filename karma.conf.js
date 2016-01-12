@@ -23,7 +23,8 @@ module.exports = function(config) {
             reporters: [
                 { type: 'html', subdir: 'report-html' },
                 { type: 'lcov', subdir: 'report-lcov' },
-                { type: 'text-summary' }
+                { type: 'text-summary' },
+                { type: 'cobertura', subdir: 'report-cobertura' }
             ]
         },
         // test results reporter to use

@@ -1,4 +1,4 @@
-(function () {
+(function() {
     'use strict';
 
     angular
@@ -11,6 +11,8 @@
         logger.info('Activated Admin View');
         /*jshint validthis: true */
         var vm = this;
-vm.name = 'hans';
+
+        vm.name = 'Hans';
+        vm.title = 'Admin';
     }
 })();

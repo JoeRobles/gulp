@@ -13,8 +13,8 @@
     }
 
     var config = {
-        appErrorPrefix: '[raro Error] ',
-        appTitle: 'raro'
+        appErrorPrefix: '[boilerplate Error] ',
+        appTitle: 'boilerplate'
     };
 
     core.value('config', config);
